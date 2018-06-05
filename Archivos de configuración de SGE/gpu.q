@@ -1,0 +1,65 @@
+qname                 gpu.q
+hostlist              @allhosts
+seq_no                20
+load_thresholds       np_load_avg=1.75
+suspend_thresholds    NONE
+nsuspend              1
+suspend_interval      00:05:00
+priority              0
+min_cpu_interval      00:05:00
+processors            UNDEFINED
+qtype                 BATCH INTERACTIVE
+ckpt_list             NONE
+pe_list               make mpi mpich orte rcuda
+rerun                 FALSE
+slots                 1,[compute-1-0.local=1],[compute-1-1.local=1], \
+                      [compute-1-2.local=1],[compute-1-3.local=1], \
+                      [compute-1-4.local=1],[compute-1-5.local=1], \
+                      [compute-1-6.local=1],[compute-1-7.local=1], \
+                      [compute-1-8.local=1],[compute-1-9.local=1], \
+                      [compute-2-0.local=1],[compute-2-1.local=1], \
+                      [compute-2-2.local=1],[compute-2-3.local=1], \
+                      [compute-2-4.local=1],[compute-2-5.local=1], \
+                      [compute-2-6.local=1],[compute-2-7.local=1], \
+                      [compute-2-8.local=1],[compute-2-9.local=1], \
+                      [compute-3-0.local=1],[compute-3-1.local=1], \
+                      [compute-3-2.local=1],[compute-3-3.local=1], \
+                      [compute-3-4.local=1],[compute-3-5.local=1], \
+                      [compute-3-6.local=1],[compute-3-7.local=1], \
+                      [compute-3-8.local=1],[compute-3-9.local=1], \
+                      [compute-3-10.local=1]
+tmpdir                /tmp
+shell                 /bin/csh
+prolog                NONE
+epilog                NONE
+shell_start_mode      posix_compliant
+starter_method        NONE
+suspend_method        NONE
+resume_method         NONE
+terminate_method      NONE
+notify                00:00:60
+owner_list            NONE
+user_lists            NONE
+xuser_lists           NONE
+subordinate_list      NONE
+complex_values        gpu=TRUE
+projects              NONE
+xprojects             NONE
+calendar              NONE
+initial_state         default
+s_rt                  INFINITY
+h_rt                  INFINITY
+s_cpu                 INFINITY
+h_cpu                 INFINITY
+s_fsize               INFINITY
+h_fsize               INFINITY
+s_data                INFINITY
+h_data                INFINITY
+s_stack               INFINITY
+h_stack               INFINITY
+s_core                INFINITY
+h_core                INFINITY
+s_rss                 INFINITY
+h_rss                 INFINITY
+s_vmem                INFINITY
+h_vmem                INFINITY

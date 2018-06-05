@@ -1,0 +1,127 @@
+<?xml version="1.0" standalone="no"?>
+<kickstart>
+<description>
+</description>
+
+<changelog>
+</changelog>
+
+<main>
+        <!-- kickstart 'main' commands go here -->
+</main>
+
+<pre>
+       <!-- Boootloader to none for using lilo -->
+       echo "
+       partition / --onpart=/dev/sdb4
+       partition swap --onpart=/dev/sda3"&gt; /tmp/user_partition_info
+</pre>
+
+
+<!-- There may be as many packages as needed here. Just make sure you only
+     uncomment as many package lines as you need. Any empty <package></package>
+     tags are going to confuse rocks and kill the installation procedure
+-->
+<!-- <package> insert 2nd package name here and uncomment the line</package> -->
+<!-- <package> insert 3rd package name here and uncomment the line</package> -->
+
+
+<post>
+<!-- pones la label de la particion sdb4 a ordis -->
+e2label /dev/sdb4 ordis
+
+<!-- nos movemos a la particion de tmp -->
+cd /tmp
+
+<!-- descaga de paqueteria necesaria para cuda -->
+wget http://172.20.41.50/install/contrib/6.2/x86_64/driver480.run
+wget http://172.20.41.50/install/contrib/6.2/x86_64/dkms.rpm
+wget http://172.20.41.50/install/contrib/6.2/x86_64/freeglut.rpm
+wget http://172.20.41.50/install/contrib/6.2/x86_64/freeglut-devel.rpm
+wget http://172.20.41.50/install/contrib/6.2/x86_64/libvdpau.rpm
+wget http://172.20.41.50/install/contrib/6.2/x86_64/cudasdk7.5.run
+<!-- descarga de paqueteria necesaria para g++ -->
+wget http://172.20.41.50/install/contrib/6.2/x86_64/gcc-c++.rpm
+wget http://172.20.41.50/install/contrib/6.2/x86_64/gcc.rpm
+wget http://172.20.41.50/install/contrib/6.2/x86_64/cpp.rpm
+wget http://172.20.41.50/install/contrib/6.2/x86_64/libstdc++-devel.rpm
+wget http://172.20.41.50/install/contrib/6.2/x86_64/libgcc.rpm
+wget http://172.20.41.50/install/contrib/6.2/x86_64/libstdc++.rpm
+wget http://172.20.41.50/install/contrib/6.2/x86_64/libgfortram.rpm
+wget http://172.20.41.50/install/contrib/6.2/x86_64/gcc-gfortram.rpm
+wget http://172.20.41.50/install/contrib/6.2/x86_64/libgomp.rpm
+<!-- compilador de fortram -->
+wget http://172.20.41.50/install/contrib/6.2/x86_64/gcc-34.rpm
+wget http://172.20.41.50/install/contrib/6.2/x86_64/gcc-g77.rpm
+
+
+<!-- ponemos todo lo descargado a 777 -->
+chmod 777 *
+
+<!-- instalacion de la paqueteria para cuda -->
+/usr/bin/yum localinstall --nogpgcheck  /tmp/dkms.rpm
+/usr/bin/yum localinstall --nogpgcheck  /tmp/freeglut.rpm
+/usr/bin/yum localinstall --nogpgcheck  /tmp/freeglut-devel.rpm
+/usr/bin/yum localinstall --nogpgcheck  /tmp/libvdpau.rpm
+<!-- instalacion de la paqueteria para g++ -->
+/usr/bin/yum localinstall --nogpgcheck  /tmp/cpp.rpm
+/usr/bin/yum localinstall --nogpgcheck  /tmp/gcc-c++.rpm
+/usr/bin/yum localinstall --nogpgcheck  /tmp/gcc-gfortran.rpm
+/usr/bin/yum localinstall --nogpgcheck  /tmp/libgcc.rpm
+/usr/bin/yum localinstall --nogpgcheck  /tmp/libgfortran.rpm
+/usr/bin/yum localinstall --nogpgcheck  /tmp/libgomp.rpm
+/usr/bin/yum localinstall --nogpgcheck  /tmp/libstdc++.rpm
+/usr/bin/yum localinstall --nogpgcheck  /tmp/libstdc++-devel.rpm
+/usr/bin/yum localinstall --nogpgcheck  /tmp/gcc.rpm
+<!-- instalamos el compilador de fortram -->
+/usr/bin/yum localinstall --nogpgcheck  /tmp/gcc-34.rpm
+/usr/bin/yum localinstall --nogpgcheck  /tmp/gcc-g77.rpm
+
+<!-- add wake on lan to eth0 -->
+
+echo '/usr/sbin/ethtool -s eth0 wol g' >> /etc/rc.d/rc.local
+<!-- cambio para usar los drivers de CUDA -->
+ln -s /boot/initramfs-2.6.32-504.16.2.el6.x86_64.img /initrd.img
+ln -s /boot/vmlinuz-2.6.32-504.16.2.el6.x86_64 /vmlinuz
+
+<!-- Creamos la carpeta /export en los nodos-->
+mkdir /export
+
+<!-- desactivamos nouveau el driver de video en centos -->
+echo 'blacklist nouveau' >> /etc/modprobe.d/blacklist.conf
+mv /boot/initramfs-$(uname -r).img /boot/initramfs-$(uname -r).img.bak
+dracut -v /boot/initramfs-$(uname -r).img $(uname -r)
+<!-- instalacion del driver de la GTX 480 -->
+./driver480.run -s
+
+
+
+        <!-- Insert your post installation script here. This
+        code will be executed on the destination node after the
+        packages have been installed. Typically configuration files
+        are built and services setup in this section. -->
+
+        <!-- WARNING: Watch out for special XML chars like ampersand,
+        greater/less than and quotes. A stray ampersand will cause the
+        kickstart file building process to fail, thus, you won't be able
+        to reinstall any nodes. It is recommended that after you create an
+        XML node file, that you run:
+
+                xmllint -noout file.xml
+        -->
+
+        <eval shell="python">
+
+                <!-- This is python code that will be executed on the
+                frontend node during kickstart file generation. You may contact
+                the database, make network queries, etc.  These sections are
+                generally used to help build more complex configuration
+                files.  The 'shell' attribute is optional and may point to any
+                language interpreter such as "bash", "perl", "ruby", etc.
+                By default shell="bash".  -->
+
+        </eval>
+
+</post>
+
+</kickstart>
